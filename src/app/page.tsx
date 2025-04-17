@@ -1,12 +1,21 @@
 'use client';
 
+import React from 'react';
 import { useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import LandingPage from '@/components/LandingPage';
 import GameBoard from '@/components/GameBoard';
 import NavBar from '@/components/NavBar';
+import Footer from '@/components/Footer';
 import useGame from '@/hooks/useGame';
 
+/**
+ * 사용자의 인증 및 게임 상태에 따라 게임 화면 또는 랜딩 페이지를 렌더링하는 React 컴포넌트입니다.
+ *
+ * 사용자가 로그인되어 있고 게임이 시작되지 않은 경우, 게임을 자동으로 시작합니다.
+ * 게임이 시작된 경우 내비게이션 바, 게임 보드, 푸터를 포함한 게임 인터페이스를 표시하며,
+ * 그렇지 않으면 랜딩 페이지를 보여줍니다.
+ */
 export default function Home() {
   const { isGameStarted, startGame } = useGame();
   const { data: session, status } = useSession();
@@ -32,25 +41,7 @@ export default function Home() {
             <GameBoard />
           </main>
           
-          <footer className="bg-gray-50 border-t border-gray-100 py-6">
-            <div className="max-w-6xl mx-auto px-6">
-              <div className="flex flex-col md:flex-row justify-between items-center">
-                <p className="text-xl font-bold tracking-tight text-gray-900">
-                  goggle<span className="text-sky-400">.</span>
-                </p>
-                
-                <div className="flex space-x-6 mt-4 md:mt-0">
-                  <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors text-sm">블로그</a>
-                  <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors text-sm">문의하기</a>
-                  <a href="#" className="text-gray-500 hover:text-gray-900 transition-colors text-sm">개인정보처리방침</a>
-                </div>
-              </div>
-              
-              <div className="mt-4 pt-4 border-t border-gray-200 flex justify-center">
-                <p className="text-sm text-gray-500">© 2025 Goggle. All rights reserved.</p>
-              </div>
-            </div>
-          </footer>
+          <Footer className="py-6" />
         </div>
       ) : (
         <LandingPage />
