@@ -1,27 +1,27 @@
 import React, { type ReactElement } from 'react';
 import { GameNode, type GameTree as GameTreeType } from '@/lib/types';
 import GameTreeNode from './GameTreeNode';
+import GameTreeEdge from './GameTreeEdge'; // 별도 컴포넌트 사용
 import { calculateTreeLayout } from '@/lib/treeLayout';
 
 interface GameTreeProps {
   gameTree: GameTreeType;
   onNodeClick: (nodeId: string) => void;
-  gridSize?: number;  // 옵셔널 props 추가
+  gridSize?: number;
 }
 
 export default function GameTree({ 
   gameTree, 
   onNodeClick,
-  gridSize = 20  // 기본값 설정
+  gridSize = 30
 }: GameTreeProps) {
   const layout = calculateTreeLayout(gameTree);
   
-  // 노드 캐시 추가
+  // 노드 캐시
   const nodeCache = new Map<string, GameNode>();
 
-  // 노드 찾기 함수 추가
+  // 노드 찾기 함수
   const findNodeById = (nodeId: string): GameNode | null => {
-    // 캐시된 결과가 있으면 반환
     if (nodeCache.has(nodeId)) {
       return nodeCache.get(nodeId)!;
     }
@@ -35,7 +35,6 @@ export default function GameTree({
       return null;
     };
 
-    // 결과를 캐시에 저장하고 반환
     const result = traverse(gameTree.root);
     if (result) {
       nodeCache.set(nodeId, result);
@@ -50,53 +49,37 @@ export default function GameTree({
       const fromPos = layout.positions.get(from.id);
       const toPos = layout.positions.get(to.id);
       
-      // 위치 데이터가 없는 경우 edge를 그리지 않음
       if (!fromPos || !toPos) {
-        console.warn(`Missing position data for nodes: ${from.id} -> ${to.id}`);
         return;
       }
       
-      // 시작점과 끝점 - gridSize 사용
       const x1 = fromPos.x * gridSize;
       const y1 = fromPos.y * gridSize;
       const x2 = toPos.x * gridSize;
       const y2 = toPos.y * gridSize;
       
-      // 제어점 계산 (곡선의 모양을 결정)
-      const midY = (y1 + y2) / 2;
-      const isMainLine = x1 === x2; // 메인 수순인지 확인
-      
-      let path;
-      if (isMainLine) {
-        // 메인 수순은 직선으로
-        path = `M ${x1} ${y1} L ${x2} ${y2}`;
-      } else {
-        // 변화도는 부드러운 곡선으로
-        path = `M ${x1} ${y1} 
-                C ${x1} ${midY},
-                  ${x2} ${midY},
-                  ${x2} ${y2}`;
-      }
+      // x좌표가 같으면 메인라인이지만, 여기서는 gameTree.mainPath로 확인
+      const isInMainPath = gameTree.mainPath.has(to.id);
       
       edges.push(
-        <path
+        <GameTreeEdge
           key={`${from.id}-${to.id}`}
-          d={path}
-          fill="none"
-          stroke={gameTree.mainPath.has(to.id) ? '#00bcff' : '#9CA3AF'}
-          strokeWidth="1"
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          isMainLine={isInMainPath}
         />
       );
     }
 
     function traverse(node: GameNode) {
-      // 노드가 없거나 children이 없는 경우 처리
       if (!node || !node.children) {
         return;
       }
 
       node.children.forEach(child => {
-        if (child) {  // child가 유효한 경우에만 처리
+        if (child) {
           addEdge(node, child);
           traverse(child);
         }
@@ -109,24 +92,42 @@ export default function GameTree({
 
   return (
     <div className="h-full overflow-auto">
-      <div className="p-2 min-w-[150px]">
+      <div className="p-4 min-w-[180px]">
         <svg 
-          width={layout.width * gridSize} 
-          height={layout.height * gridSize}
-          className="overflow-visible"
+          width={layout.width * gridSize + 20} 
+          height={layout.height * gridSize + 20}
+          className="overflow-visible bg-transparent"
+          viewBox={`-10 -10 ${layout.width * gridSize + 20} ${layout.height * gridSize + 20}`}
         >
-          {/* 연결선 먼저 렌더링 */}
+          {/* 엣지 렌더링 향상을 위한 설정 */}
+          <defs>
+            <filter id="crisp-edges">
+              <feFlood x="0" y="0" width="100%" height="100%" floodColor="none" />
+              <feComposite in="SourceGraphic" operator="over" />
+            </filter>
+          </defs>
+          
+          {/* 배경을 명시적으로 투명하게 설정 */}
+          <rect
+            x="-10"
+            y="-10"
+            width={layout.width * gridSize + 40}
+            height={layout.height * gridSize + 40}
+            fill="transparent"
+          />
+          
+          {/* 연결선 먼저 그리기 */}
           <g className="connections">
             {renderEdges()}
           </g>
           
-          {/* 노드 렌더링 */}
+          {/* 노드는 나중에 그려서 선 위에 올라가도록 */}
           <g className="nodes">
             {Array.from(layout.positions.entries()).map(([id, pos]) => {
               const node = findNodeById(id);
               if (!node) return null;
               
-                return (
+              return (
                 <GameTreeNode
                   key={id}
                   node={node}
@@ -135,13 +136,8 @@ export default function GameTree({
                   onClick={onNodeClick}
                   x={pos.x * gridSize}
                   y={pos.y * gridSize}
-                  style={{
-                  position: 'absolute',
-                  left: pos.x * gridSize,
-                  top: pos.y * gridSize
-                  }}
                 />
-                );
+              );
             })}
           </g>
         </svg>

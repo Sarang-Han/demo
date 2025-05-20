@@ -9,7 +9,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
-    <footer className={`bg-gray-50 border-t border-gray-100 py-10 ${className}`}>
+    <footer className={`bg-gray-50 border-t border-gray-100 py-8 ${className}`}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
@@ -32,7 +32,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
           </div>
         </div>
         
-        <div className="border-t border-gray-200 mt-8 pt-8 flex justify-center">
+        <div className="border-t border-gray-200 mt-6 pt-6 flex justify-center">
           <p className="text-sm text-gray-500">© 2025 Goggle. All rights reserved.</p>
         </div>
       </div>
@@ -40,4 +40,4 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   );
 };
 
-export default Footer; 
+export default Footer;

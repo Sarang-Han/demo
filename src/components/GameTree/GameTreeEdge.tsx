@@ -15,25 +15,31 @@ export default function GameTreeEdge({
   y2, 
   isMainLine 
 }: GameTreeEdgeProps) {
-  const controlPointOffset = Math.abs(x2 - x1) * 0.5; // 곡선의 휘어짐 정도 조절
+  // 수직 방향 이동인지 확인
+  const isVertical = x1 === x2;
   
-  // SVG path 문자열 생성
-  const path = isMainLine
-    ? `M ${x1} ${y1} L ${x2} ${y2}`  // 메인 수순은 직선
-    : `M ${x1} ${y1}                  // 변화도는 베지어 곡선
-       C ${x1} ${y1 + controlPointOffset},
-         ${x2} ${y2 - controlPointOffset},
-         ${x2} ${y2}`;
+  // 커브의 제어점 계산 - 훨씬 완만한 곡선으로
+  const midY = (y1 + y2) / 2;
+  
+  // 경로 생성
+  let path;
+  if (isVertical) {
+    path = `M ${x1} ${y1} L ${x2} ${y2}`;
+  } else {
+    // 베지어 커브는 오직 수평 변경일 때만 사용
+    path = `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`;
+  }
 
   return (
     <path
       d={path}
       fill="none"
       stroke={isMainLine ? '#00bcff' : '#9CA3AF'}
-      strokeWidth={isMainLine ? 1 : 0.5}
-      className="transition-colors duration-200"
+      strokeWidth={isMainLine ? 2 : 1.5}
       strokeLinecap="round"
-      strokeLinejoin="round"
+      strokeOpacity={1} // 투명도 100%로 설정
+      className="transition-colors"
+      vectorEffect="non-scaling-stroke" // SVG 크기 변경시에도 선 두께 일정하게
     />
   );
 }

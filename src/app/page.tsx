@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import LandingPage from '@/components/LandingPage';
 import GameBoard from '@/components/GameBoard';
-import Footer from '@/components/Footer';
 import useGame from '@/hooks/useGame';
 
 export default function Home() {
@@ -22,13 +21,8 @@ export default function Home() {
   return (
     <>
       {isGameStarted ? (
-        <div className="min-h-screen flex flex-col">
-          
-          <main className="flex-grow">
-            <GameBoard />
-          </main>
-          
-          <Footer className="py-6" />
+        <div className="h-screen overflow-hidden">
+          <GameBoard />
         </div>
       ) : (
         <LandingPage />
