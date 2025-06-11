@@ -1,6 +1,6 @@
 # Goggle
 
-## 🗂️ 프로젝트 구조
+## 📁 프로젝트 구조
 
 ```
 src/
@@ -13,31 +13,12 @@ public/           # 정적 파일 (이미지, favicon 등)
 ...
 ```
 
-## 주요 기능
+## ✨ 주요 기능
 
 - SGF(바둑 기보) 파일 업로드/저장/삭제/다운로드/즐겨찾기
 - 바둑판 SVG 시각화, 다양한 마커 및 하이라이트 표시
 - AI(카타고 등) 기반 기보 분석 및 결과 시각화
 - 소셜 로그인 및 사용자별 데이터 관리
-
-
-## ⚙️ How to Build
-
-1. **의존성 설치**
-   ```sh
-   npm install
-   ```
-2. **개발 서버 실행**
-   ```sh
-   npm run dev
-   ```
-   - 기본적으로 [http://localhost:3000](http://localhost:3000)에서 실행됩니다.
-
-3. **프로덕션 빌드**
-   ```sh
-   npm run build
-   npm start
-   ```
 
 
 ## 🛠️ How to Install
@@ -65,10 +46,27 @@ public/           # 정적 파일 (이미지, favicon 등)
    - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`: [Google Cloud Console](https://console.cloud.google.com/)에서 발급받은 값
    - `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`: [네이버 개발자 센터](https://developers.naver.com/)에서 발급받은 값
 
-4. 위의 **How to Build** 단계 참고
+4. 아래 **How to Build** 단계에 따라 프로젝트 빌드 후 실행
 
+## 📦 How to Build
 
-## 사용된 주요 오픈소스
+1. **의존성 설치**
+   ```sh
+   npm install
+   ```
+2. **개발 서버 실행**
+   ```sh
+   npm run dev
+   ```
+   - 기본적으로 [http://localhost:3000](http://localhost:3000)에서 실행됩니다.
+
+3. **프로덕션 빌드**
+   ```sh
+   npm run build
+   npm start
+   ```
+
+## 👀 사용된 오픈소스
 
 - **Next.js**: React 기반 SSR/SSG 프레임워크 ([nextjs.org](https://nextjs.org/))
 - **React**: UI 라이브러리 ([react.dev](https://react.dev/))
@@ -80,9 +78,8 @@ public/           # 정적 파일 (이미지, favicon 등)
 - **FileSaver.js**: SGF 파일 다운로드 지원
 
 
-## 기타 참고
+## ✔️ 기타 참고
 
 - SGF 파싱 및 저장 로직: [`src/lib/game.ts`](src/lib/game.ts), [`src/lib/sgfStorage.ts`](src/lib/sgfStorage.ts)
 - 바둑판 렌더링: [`src/lib/d3Setup.ts`](src/lib/d3Setup.ts), [`src/components/Board.tsx`](src/components/Board.tsx)
-- AI 분석 연동: [`src/lib/sgfAnalyzer.ts`](src/lib/sgfAnalyzer.ts)
 - 타입 정의: [`src/lib/types.ts`](src/lib/types.ts)
